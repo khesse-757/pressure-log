@@ -157,18 +157,3 @@ Run npm run check and npm run build, fix anything flagged. Then run
 workflow created the tag and release, and the deploy workflow
 published the site.
 ```
-
-## Prompt 9: Blog post (run in the kahdev.me repo)
-
-```
-Read CLAUDE.md from my pressure-log repo and its README for context.
-Write a blog post in _posts/ following this repo's post format and my
-existing posts' tone. Topic: building a static barometric pressure
-tracker for RuuviTag CSV exports. Cover: why static GitHub Pages
-beat Web Bluetooth (advertisement scanning still flag gated in
-Chrome, absent in Safari) and the Ruuvi Cloud gateway for v1, the
-parse/resample/rate pipeline, handling a 109k row CSV with a worker
-and uPlot, and the planned Raspberry Pi live collector as phase 2.
-Link the live site and repo. Add a project card to projects.html in
-the existing card format. No em dashes, no emojis.
-```
