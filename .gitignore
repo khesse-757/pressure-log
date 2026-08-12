@@ -1,0 +1,4 @@
+node_modules/
+dist/
+RuuviTag_*.csv
+.DS_Store
