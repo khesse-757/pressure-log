@@ -3,8 +3,9 @@ import type { RateOfChange, Series } from '../utils/types';
 const MS_PER_HOUR = 3_600_000;
 
 /** Index of the timestamp nearest to target. Ties go to the earlier
- * reading. Assumes timestamps are sorted ascending and non-empty. */
-function nearestIndex(timestamps: number[], target: number): number {
+ * reading. Assumes timestamps are sorted ascending and non-empty.
+ * Exported for the chart cursor, which snaps to the same points. */
+export function nearestIndex(timestamps: number[], target: number): number {
   let lo = 0;
   let hi = timestamps.length - 1;
   while (lo < hi) {

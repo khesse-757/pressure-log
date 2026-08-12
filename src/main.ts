@@ -1,15 +1,17 @@
 import './styles/main.css';
-
-function renderShell(root: HTMLElement): void {
-  root.innerHTML = `
-    <header class="app-header">
-      <span class="app-title">Pressure Log</span>
-    </header>
-    <main class="app-main" id="view-root"></main>
-  `;
-}
+import { startApp } from './ui/App';
 
 const root = document.getElementById('app');
 if (root instanceof HTMLElement) {
-  renderShell(root);
+  root.innerHTML = `
+    <header class="app-header">
+      <span class="app-title">Pressure Log</span>
+      <button type="button" class="help-button" aria-label="Help">?</button>
+    </header>
+    <main class="app-main" id="view-root"></main>
+  `;
+  const view = document.getElementById('view-root');
+  if (view instanceof HTMLElement) {
+    void startApp(view);
+  }
 }

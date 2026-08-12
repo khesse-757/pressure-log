@@ -47,6 +47,21 @@ export interface RateOfChange {
   fullCoverage: boolean;
 }
 
+/** A personal note pinned to a moment in time. */
+export interface Note {
+  id: string;
+  timestamp: number;
+  text: string;
+  /** Optional 1 to 5 feeling rating. */
+  feeling?: number;
+  createdAt: number;
+}
+
+export type PressureUnit = 'hPa' | 'inHg';
+
+/** Chart range: trailing days, or the whole dataset. */
+export type RangeSelection = number | 'all';
+
 export type ParseWorkerRequest = { type: 'parse'; text: string };
 
 export type ParseWorkerResponse =
