@@ -20,16 +20,21 @@ export function formatPressure(value: number, unit: PressureUnit): string {
   return `${value.toFixed(unit === 'hPa' ? 1 : 3)} ${unit}`;
 }
 
-/** Signed pressure delta or rate, like "+0.85 hPa". The sign is
- * computed after rounding so tiny negatives do not show as "-0.00". */
+/** Signed number with fixed decimals and no unit, like "+0.012". The
+ * sign is computed after rounding so tiny negatives do not show as
+ * "-0.000". */
+export function formatSignedFixed(value: number, decimals: number): string {
+  const rounded = Number(value.toFixed(decimals));
+  const sign = rounded >= 0 ? '+' : '';
+  return `${sign}${rounded.toFixed(decimals)}`;
+}
+
+/** Signed pressure delta or rate, like "+0.85 hPa". */
 export function formatSignedPressure(
   value: number,
   unit: PressureUnit
 ): string {
-  const decimals = unit === 'hPa' ? 2 : 3;
-  const rounded = Number(value.toFixed(decimals));
-  const sign = rounded >= 0 ? '+' : '';
-  return `${sign}${rounded.toFixed(decimals)} ${unit}`;
+  return `${formatSignedFixed(value, unit === 'hPa' ? 2 : 3)} ${unit}`;
 }
 
 /** Short local date and time, like "Aug 8, 11:51". */

@@ -62,6 +62,10 @@ export type PressureUnit = 'hPa' | 'inHg';
 /** Chart range: trailing days, or the whole dataset. */
 export type RangeSelection = number | 'all';
 
+/** Overview is the 5 minute chart; detail is the 1 minute chart with
+ * the per-minute slope strip. */
+export type ChartMode = 'normal' | 'detail';
+
 export type ParseWorkerRequest = { type: 'parse'; text: string };
 
 export type ParseWorkerResponse =

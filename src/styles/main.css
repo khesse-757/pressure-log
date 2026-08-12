@@ -196,6 +196,21 @@ body {
   margin-bottom: var(--space-3);
 }
 
+.toolbar-left {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  overflow-x: auto;
+}
+
+.toolbar-left .mode-toggle {
+  display: flex;
+  flex-shrink: 0;
+  gap: var(--space-1);
+  padding-right: var(--space-2);
+  border-right: 1px solid var(--color-border);
+}
+
 .toolbar-right {
   display: flex;
   align-items: center;
@@ -316,6 +331,109 @@ body {
   font-variant-numeric: tabular-nums;
 }
 
+/* Detail mode: anchored window navigation */
+
+.anchor-nav {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-bottom: var(--space-2);
+}
+
+.anchor-step {
+  width: 34px;
+  height: 30px;
+  padding: 0;
+  background: transparent;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  color: var(--color-text-muted);
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+.anchor-step:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+
+.anchor-span {
+  flex: 1;
+  text-align: center;
+  font-size: 0.8rem;
+  color: var(--color-text-muted);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.anchor-latest {
+  border: 1px solid var(--color-accent);
+  border-radius: 999px;
+  padding: 2px 12px;
+}
+
+/* Detail mode: slope strip and readout */
+
+.slope-strip-container {
+  background: var(--color-surface);
+  border-radius: var(--radius);
+  padding: var(--space-1) var(--space-2);
+  margin-bottom: var(--space-2);
+}
+
+.slope-strip-canvas {
+  display: block;
+}
+
+.slope-readout-container {
+  margin-bottom: var(--space-3);
+}
+
+.slope-readout {
+  background: var(--color-surface);
+  border-radius: var(--radius);
+  padding: var(--space-2) var(--space-3);
+}
+
+.slope-readout-main {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.slope-rate-min {
+  font-size: 1.05rem;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.slope-rate-hour {
+  font-size: 0.85rem;
+  color: var(--color-text-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.slope-tendency-label {
+  margin-left: auto;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.slope-caption {
+  margin: 4px 0 0;
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+}
+
+.slope-muted {
+  color: var(--color-text-muted);
+  font-weight: 400;
+  font-size: 0.9rem;
+}
+
 /* Rate of change panel */
 
 .rate-panel {
@@ -428,6 +546,120 @@ body {
 .tendency-falling-fast,
 .tendency-rising-fast {
   font-weight: 600;
+}
+
+/* Activity panel */
+
+.activity-panel {
+  background: var(--color-surface);
+  border-radius: var(--radius);
+  padding: var(--space-2) var(--space-3);
+  margin-top: var(--space-3);
+}
+
+.activity-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+}
+
+.activity-controls {
+  display: flex;
+  gap: var(--space-1);
+}
+
+.activity-controls select {
+  background: var(--color-bg);
+  color: var(--color-text);
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  padding: 4px 8px;
+  font-family: inherit;
+  font-size: 0.78rem;
+}
+
+.activity-controls select:focus {
+  outline: none;
+  border-color: var(--color-accent);
+}
+
+.activity-list {
+  list-style: none;
+  margin: var(--space-1) 0 0;
+  padding: 0;
+  max-height: 320px;
+  overflow-y: auto;
+}
+
+.activity-more {
+  margin: var(--space-1) 0 0;
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+}
+
+.activity-row {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  width: 100%;
+  padding: var(--space-2) var(--space-1);
+  background: none;
+  border: none;
+  border-top: 1px solid var(--color-border);
+  color: var(--color-text);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.activity-main {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.activity-kind {
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.activity-kind-fall {
+  color: var(--color-falling);
+}
+
+.activity-kind-rise {
+  color: var(--color-accent);
+}
+
+.activity-time {
+  margin-left: auto;
+  font-size: 0.8rem;
+  color: var(--color-text-muted);
+}
+
+.activity-diamond {
+  width: 9px;
+  height: 9px;
+  flex-shrink: 0;
+  background: var(--color-surface-raised);
+  border: 1.5px solid var(--color-accent);
+  border-radius: 2px;
+  transform: rotate(45deg);
+}
+
+.activity-detail {
+  margin: 0;
+  font-size: 0.8rem;
+  color: var(--color-text-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.activity-empty {
+  margin: var(--space-1) 0 0;
+  color: var(--color-text-muted);
+  font-size: 0.85rem;
 }
 
 /* Note markers on the chart */

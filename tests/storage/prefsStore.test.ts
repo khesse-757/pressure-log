@@ -9,8 +9,34 @@ describe('prefsStore', () => {
 
   it('round trips saved prefs', () => {
     const storage = new MemoryStorage();
-    savePrefs({ unit: 'inHg', rangeDays: 'all' }, storage);
-    expect(loadPrefs(storage)).toEqual({ unit: 'inHg', rangeDays: 'all' });
+    const prefs = {
+      unit: 'inHg',
+      rangeDays: 'all',
+      mode: 'detail',
+      detailRangeMinutes: 30,
+    } as const;
+    savePrefs(prefs, storage);
+    expect(loadPrefs(storage)).toEqual(prefs);
+  });
+
+  it('upgrades prefs saved before detail mode existed', () => {
+    const storage = new MemoryStorage();
+    storage.setItem('pressure-log:prefs', '{"unit":"inHg","rangeDays":5}');
+    expect(loadPrefs(storage)).toEqual({
+      unit: 'inHg',
+      rangeDays: 5,
+      mode: 'normal',
+      detailRangeMinutes: 180,
+    });
+  });
+
+  it('migrates the legacy hour based detail range to minutes', () => {
+    const storage = new MemoryStorage();
+    storage.setItem(
+      'pressure-log:prefs',
+      '{"unit":"hPa","rangeDays":2,"mode":"detail","detailRangeHours":6}'
+    );
+    expect(loadPrefs(storage).detailRangeMinutes).toBe(360);
   });
 
   it('falls back to defaults on corrupted JSON', () => {
@@ -19,9 +45,17 @@ describe('prefsStore', () => {
     expect(loadPrefs(storage)).toEqual(DEFAULT_PREFS);
   });
 
-  it('falls back to defaults on an unexpected shape', () => {
+  it('replaces invalid fields without discarding valid ones', () => {
     const storage = new MemoryStorage();
-    storage.setItem('pressure-log:prefs', '{"unit":"psi","rangeDays":-1}');
-    expect(loadPrefs(storage)).toEqual(DEFAULT_PREFS);
+    storage.setItem(
+      'pressure-log:prefs',
+      '{"unit":"psi","rangeDays":-1,"mode":"detail","detailRangeMinutes":45}'
+    );
+    expect(loadPrefs(storage)).toEqual({
+      unit: 'hPa',
+      rangeDays: 2,
+      mode: 'detail',
+      detailRangeMinutes: 180,
+    });
   });
 });

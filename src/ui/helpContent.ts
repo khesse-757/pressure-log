@@ -4,7 +4,11 @@
  * more. */
 
 import { hpaToInHg } from '../data/units';
-import { RATE_WINDOWS_HOURS, TENDENCY } from '../utils/constants';
+import {
+  RATE_WINDOWS_HOURS,
+  SLOPE_WINDOW_MINUTES,
+  TENDENCY,
+} from '../utils/constants';
 
 export interface HelpSection {
   heading: string;
@@ -67,6 +71,24 @@ export const HELP_SECTIONS: HelpSection[] = [
       `Steady: less than ${SLOW} hPa of change either way in 3 hours. Expect more of the same.`,
       `Rising: up between ${SLOW} and ${FAST} hPa in 3 hours. Skies often clear up.`,
       `Rising fast: up ${FAST} hPa or more in 3 hours. This often happens right after a storm passes.`,
+    ],
+  },
+  {
+    heading: 'Detail mode',
+    paragraphs: [
+      'Detail mode zooms way in. Readings are grouped by the minute, and the short range buttons (from 5 minutes up to 6 hours) pick how much you see at once.',
+      `Each bar under the chart is one minute's rate of change. One minute alone is too jumpy to trust, so every bar is measured over the ${SLOPE_WINDOW_MINUTES} minutes before it: the app fits a straight line through those readings and uses its slope.`,
+      'The row below the bars shows the newest rate, per minute and per hour, with the same labels as the big table. Tap the chart to see the rate at any past moment instead.',
+      'Small wiggles from minute to minute are normal. Watch the run of bars, not any single one.',
+      'Use the arrows above the chart to step back and forward through the data one window at a time, and the Latest button to snap back to now. When you have a moment marked on the big chart, the Inspect button jumps straight to it in Detail mode.',
+    ],
+  },
+  {
+    heading: 'The Activity list',
+    paragraphs: [
+      'The Activity list looks through your data for the moments when the pressure was moving fastest, both falls and rises.',
+      'Each entry shows when it happened, how fast the pressure was moving at its peak, and how long it stayed fast. Tap an entry to see that moment up close in Detail mode.',
+      'A small diamond on an entry means you wrote a note within a few hours of that moment. That makes it easy to spot when fast changes and your notes line up.',
     ],
   },
   {

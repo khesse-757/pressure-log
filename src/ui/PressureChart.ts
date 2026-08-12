@@ -27,10 +27,19 @@ export interface NoteMarkerInput {
   timestamp: number;
 }
 
+/** Live geometry of the plotting area, for overlays rendered outside
+ * the chart (the slope strip) that must share its time axis. */
+export interface ChartPlot {
+  rect: DOMRect;
+  /** CSS px within the plotting area for a timestamp. */
+  xToPx: (timestamp: number) => number;
+}
+
 export interface PressureChartHandle {
   update(series: Series, unit: PressureUnit): void;
   setCursor(cursor: ChartCursor | null): void;
   setNotes(notes: ReadonlyArray<NoteMarkerInput>): void;
+  plot(): ChartPlot | null;
   destroy(): void;
 }
 
@@ -364,6 +373,15 @@ export function createPressureChart(
     setNotes(notes: ReadonlyArray<NoteMarkerInput>): void {
       noteMarkers = notes;
       buildMarkers();
+    },
+    plot(): ChartPlot | null {
+      const current = chart;
+      if (current === null) return null;
+      return {
+        rect: current.over.getBoundingClientRect(),
+        xToPx: (timestamp: number): number =>
+          current.valToPos(timestamp / 1000, 'x'),
+      };
     },
     destroy(): void {
       observer.disconnect();

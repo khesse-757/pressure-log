@@ -7,12 +7,20 @@ import type { PressureUnit, Series } from '../utils/types';
 import { query } from './dom';
 
 export interface RatePanelHandle {
-  /** cursorTime null means live mode at the newest reading. */
-  update(series: Series, cursorTime: number | null, unit: PressureUnit): void;
+  /** cursorTime null means live mode at the newest reading. canInspect
+   * shows the Inspect button while scrubbing. */
+  update(
+    series: Series,
+    cursorTime: number | null,
+    unit: PressureUnit,
+    canInspect?: boolean
+  ): void;
 }
 
 export interface RatePanelOptions {
   onLatest: () => void;
+  /** Jump to detail mode anchored on the scrubbed moment. */
+  onInspect?: (time: number) => void;
 }
 
 interface RowCells {
@@ -31,6 +39,9 @@ export function createRatePanel(
         <h2 class="panel-title">Rate of change</h2>
         <div class="rate-mode">
           <span class="rate-moment"></span>
+          <button type="button" class="text-button rate-inspect" hidden>
+            Inspect
+          </button>
           <button type="button" class="text-button rate-latest" hidden>
             Latest
           </button>
@@ -53,8 +64,14 @@ export function createRatePanel(
   const panel = query<HTMLElement>(container, '.rate-panel');
   const moment = query<HTMLElement>(container, '.rate-moment');
   const latestButton = query<HTMLButtonElement>(container, '.rate-latest');
+  const inspectButton = query<HTMLButtonElement>(container, '.rate-inspect');
   const body = query<HTMLTableSectionElement>(container, 'tbody');
   latestButton.addEventListener('click', () => options.onLatest());
+
+  let scrubbedTime: number | null = null;
+  inspectButton.addEventListener('click', () => {
+    if (scrubbedTime !== null) options.onInspect?.(scrubbedTime);
+  });
 
   const rows = new Map<number, RowCells>();
   for (const hours of RATE_WINDOWS_HOURS) {
@@ -96,12 +113,18 @@ export function createRatePanel(
   }
 
   return {
-    update(series, cursorTime, unit): void {
+    update(series, cursorTime, unit, canInspect = false): void {
       const latest = series.timestamps[series.timestamps.length - 1] ?? null;
       const endTime = cursorTime ?? latest;
       const scrubbing = cursorTime !== null;
+      scrubbedTime = cursorTime;
       panel.classList.toggle('rate-panel-scrubbing', scrubbing);
       latestButton.hidden = !scrubbing;
+      inspectButton.hidden = !(
+        scrubbing &&
+        canInspect &&
+        options.onInspect !== undefined
+      );
       moment.textContent =
         endTime === null
           ? 'No data loaded'

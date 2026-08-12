@@ -2,10 +2,22 @@ import { describe, expect, it } from 'vitest';
 import {
   formatDayTime,
   formatPressure,
+  formatSignedFixed,
   formatSignedPressure,
   fromDatetimeLocalValue,
   toDatetimeLocalValue,
 } from '@utils/format';
+
+describe('formatSignedFixed', () => {
+  it('formats with the requested decimals and a sign', () => {
+    expect(formatSignedFixed(0.0123, 3)).toBe('+0.012');
+    expect(formatSignedFixed(-0.74, 2)).toBe('-0.74');
+  });
+
+  it('never shows negative zero', () => {
+    expect(formatSignedFixed(-0.0001, 3)).toBe('+0.000');
+  });
+});
 
 describe('formatPressure', () => {
   it('shows one decimal for hPa', () => {
