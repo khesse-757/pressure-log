@@ -1,4 +1,9 @@
 node_modules/
 dist/
-RuuviTag_*.csv
+coverage/
+*.local
 .DS_Store
+
+# Raw RuuviTag exports dropped in the repo root stay out of git;
+# the trimmed fixture lives in tests/fixtures/
+/RuuviTag*.csv

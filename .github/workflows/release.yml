@@ -1,0 +1,98 @@
+name: Version and Release
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  version-and-release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      
+      - name: Read VERSION file
+        id: version
+        run: |
+          if [ -f VERSION ]; then
+            VERSION=$(cat VERSION | tr -d '[:space:]')
+            echo "version=$VERSION" >> $GITHUB_OUTPUT
+            echo "Found version: $VERSION"
+          else
+            echo "No VERSION file found"
+            exit 1
+          fi
+      
+      - name: Check if tag exists
+        id: check_tag
+        run: |
+          VERSION="${{ steps.version.outputs.version }}"
+          if git rev-parse "v$VERSION" >/dev/null 2>&1; then
+            echo "exists=true" >> $GITHUB_OUTPUT
+            echo "Tag v$VERSION already exists"
+          else
+            echo "exists=false" >> $GITHUB_OUTPUT
+            echo "Tag v$VERSION does not exist - will create"
+          fi
+      
+      - name: Get latest tag
+        id: latest_tag
+        if: steps.check_tag.outputs.exists == 'false'
+        run: |
+          LATEST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "v0.0.0")
+          echo "latest=$LATEST_TAG" >> $GITHUB_OUTPUT
+          echo "Latest tag: $LATEST_TAG"
+      
+      - name: Generate changelog
+        id: changelog
+        if: steps.check_tag.outputs.exists == 'false'
+        run: |
+          VERSION="${{ steps.version.outputs.version }}"
+          LATEST_TAG="${{ steps.latest_tag.outputs.latest }}"
+          
+          echo "## Changes in v$VERSION" > changelog.md
+          echo "" >> changelog.md
+          
+          if [ "$LATEST_TAG" != "v0.0.0" ]; then
+            echo "Comparing $LATEST_TAG...HEAD"
+            git log $LATEST_TAG..HEAD --pretty=format:"- %s (%h)" --no-merges >> changelog.md
+          else
+            echo "Initial release" >> changelog.md
+          fi
+          
+          echo "" >> changelog.md
+          echo "**Full Changelog**: https://github.com/${{ github.repository }}/compare/$LATEST_TAG...v$VERSION" >> changelog.md
+          
+          cat changelog.md
+      
+      - name: Create tag
+        if: steps.check_tag.outputs.exists == 'false'
+        run: |
+          VERSION="${{ steps.version.outputs.version }}"
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git tag -a "v$VERSION" -m "Release v$VERSION"
+          git push origin "v$VERSION"
+      
+      - name: Create GitHub Release
+        if: steps.check_tag.outputs.exists == 'false'
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: v${{ steps.version.outputs.version }}
+          name: Release v${{ steps.version.outputs.version }}
+          body_path: changelog.md
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: Skip release creation
+        if: steps.check_tag.outputs.exists == 'true'
+        run: |
+          echo "Tag v${{ steps.version.outputs.version }} already exists. Skipping release creation."
